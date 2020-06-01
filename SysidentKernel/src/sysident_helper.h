@@ -20,4 +20,9 @@
 
 int sysidentGetBootloaderRevision(int *rev);
 
+int sysidentGetSoCRevision(int *pRev);
+
+int sysidentGetErnieDLVersion(int *pVersion);
+int sysidentGetBatteryVersion(int *pHWinfo, int *pFWinfo, int *pDFinfo);
+
 #endif // _SYSIDENT_KERNEL_H_
