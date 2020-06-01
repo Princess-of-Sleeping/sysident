@@ -420,35 +420,6 @@ int addDeviceSpace(const char *dev){
 	return 0;
 }
 
-int addHardwareInfo(void){
-
-	char text[0x80];
-	unsigned char info[4];
-
-	sceClibMemset(info, 0, sizeof(info));
-	_vshSysconGetHardwareInfo(info);
-
-	sceClibSnprintf(text, sizeof(text) - 1, "%02X %02X %02X %02X", info[3], info[2], info[1], info[0]);
-
-	add_entry("info_hardware_info", "Hardware Info", text);
-
-	return 0;
-}
-
-int addBootloaderRevision(void){
-
-	int rev = 0;
-	char text[0x80];
-
-	sysidentGetBootloaderRevision(&rev);
-
-	sceClibSnprintf(text, sizeof(text) - 1, "%d", rev);
-
-	add_entry("info_bootloader_rev", "Bootloader Revision", text);
-
-	return 0;
-}
-
 int addSerialNo(void){
 
 	int start_idx = 0;
@@ -505,6 +476,84 @@ int addModelFromIdStorage(void){
 	return 0;
 }
 
+int addHardwareInfo(void){
+
+	char text[0x80];
+	unsigned char info[4];
+
+	sceClibMemset(info, 0, sizeof(info));
+	_vshSysconGetHardwareInfo(info);
+
+	sceClibSnprintf(text, sizeof(text) - 1, "%02X %02X %02X %02X", info[3], info[2], info[1], info[0]);
+
+	add_entry("info_hardware_info", "Hardware Info", text);
+
+	return 0;
+}
+
+int addBootloaderRevision(void){
+
+	int rev = 0;
+	char text[0x80];
+
+	sysidentGetBootloaderRevision(&rev);
+
+	sceClibSnprintf(text, sizeof(text) - 1, "%d", rev);
+
+	add_entry("info_bootloader_rev", "Bootloader Revision", text);
+
+	return 0;
+}
+
+int addSoCRevision(void){
+
+	int rev = 0;
+	char text[0x80];
+
+	sysidentGetSoCRevision(&rev);
+
+	sceClibSnprintf(text, sizeof(text) - 1, "%d", rev & 0xFFFF);
+
+	add_entry("info_soc_rev", "SoC Revision", text);
+
+	return 0;
+}
+
+int addErnieDLVersion(void){
+
+	int ver = 0;
+	char text[0x80];
+
+	sysidentGetErnieDLVersion(&ver);
+
+	sceClibSnprintf(text, sizeof(text) - 1, "0x%08X", ver);
+
+	add_entry("info_ernie_dl_version", "Ernie DL Version", text);
+
+	return 0;
+}
+
+int addBatteryVersion(void){
+
+	int HWinfo, FWinfo, DFinfo;
+	char text[0x80];
+
+	sysidentGetBatteryVersion(&HWinfo, &FWinfo, &DFinfo);
+
+	add_entry("info_battery_version", "Battery Version", " ");
+
+	sceClibSnprintf(text, sizeof(text) - 1, "0x%08X(%s)", HWinfo, (HWinfo > 7) ? "Abby" : "Bert");
+	add_entry("info_battery_version_1", "HWinfo", text);
+
+	sceClibSnprintf(text, sizeof(text) - 1, "0x%08X", FWinfo);
+	add_entry("info_battery_version_2", "FWinfo", text);
+
+	sceClibSnprintf(text, sizeof(text) - 1, "0x%08X", DFinfo);
+	add_entry("info_battery_version_3", "DFinfo", text);
+
+	return 0;
+}
+
 int addSysident(SceSize args, void *argp){
 
 	char cid[0x20];
@@ -555,6 +604,9 @@ int addSysident(SceSize args, void *argp){
 		add_category("sysident_advanced_mode", "Advanced Mode");
 		addHardwareInfo();
 		addBootloaderRevision();
+		addSoCRevision();
+		addErnieDLVersion();
+		addBatteryVersion();
 	}
 
 	return 0;
