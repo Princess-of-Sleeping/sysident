@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Sysident Kernel
  * Copyright (C) 2020, 浅倉麗子, sysie, Princess of Sleeping
  *
@@ -15,12 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <psp2kern/kernel/cpu.h>
 #include <psp2kern/kernel/modulemgr.h>
-#include <psp2kern/kernel/threadmgr.h>
 #include <psp2kern/kernel/sysmem.h>
-#include <psp2kern/io/fcntl.h>
-#include <psp2kern/io/stat.h>
+#include <psp2kern/kernel/cpu.h>
 #include <taihen.h>
 
 #include "sysident_helper.h"
@@ -44,6 +41,11 @@ int module_get_export_func(SceUID pid, const char *modname, unsigned int lib_nid
 // old name is sceKernelGetSysrootBuffer
 SceBootArgs *(* sceKernelSysrootGetKblParam)(void);
 
+int (* scePervasiveGetSoCRevision)(void);
+
+void (* sceSysconGetErnieDLVersion)(int *result);
+int  (* sceSysconGetBatteryVersion)(int *HWinfo, int *FWinfo, int *DFinfo);
+
 int sysidentGetBootloaderRevision(int *pRev){
 
 	int state, res;
@@ -61,10 +63,79 @@ int sysidentGetBootloaderRevision(int *pRev){
 	return res;
 }
 
+int sysidentGetSoCRevision(int *pRev){
+
+	int state, res;
+
+	ENTER_SYSCALL(state);
+
+	if(pRev == NULL){
+		res = 0x80020006;
+	}else{
+		res = scePervasiveGetSoCRevision();
+		res = ksceKernelMemcpyKernelToUser((uintptr_t)pRev, &res, 4);
+	}
+
+	EXIT_SYSCALL(state);
+
+	return res;
+}
+
+int sysidentGetErnieDLVersion(int *pVersion){
+
+	int state, res;
+
+	ENTER_SYSCALL(state);
+
+	if(pVersion == NULL){
+		res = 0x80020006;
+	}else{
+		sceSysconGetErnieDLVersion(&res);
+		res = ksceKernelMemcpyKernelToUser((uintptr_t)pVersion, &res, 4);
+	}
+
+	EXIT_SYSCALL(state);
+
+	return res;
+}
+
+int sysidentGetBatteryVersion(int *pHWinfo, int *pFWinfo, int *pDFinfo){
+
+	int state, res;
+
+	int HWinfo, FWinfo, DFinfo;
+
+	ENTER_SYSCALL(state);
+
+	res = sceSysconGetBatteryVersion(&HWinfo, &FWinfo, &DFinfo);
+
+	if(res >= 0 && pHWinfo != NULL)
+		res = ksceKernelMemcpyKernelToUser((uintptr_t)pHWinfo, &HWinfo, 4);
+
+	if(res >= 0 && pFWinfo != NULL)
+		res = ksceKernelMemcpyKernelToUser((uintptr_t)pFWinfo, &FWinfo, 4);
+
+	if(res >= 0 && pDFinfo != NULL)
+		res = ksceKernelMemcpyKernelToUser((uintptr_t)pDFinfo, &DFinfo, 4);
+
+	EXIT_SYSCALL(state);
+
+	return res;
+}
+
 void _start() __attribute__ ((weak, alias ("module_start")));
 int module_start(SceSize argc, const void *args){
 
 	if(GetExport("SceSysmem", 0x3691DA45, 0x9DB56D1F, &sceKernelSysrootGetKblParam) < 0)
+		return SCE_KERNEL_START_NO_RESIDENT;
+
+	if(GetExport("SceLowio", 0xE692C727, 0x714EEFB7, &scePervasiveGetSoCRevision) < 0)
+		return SCE_KERNEL_START_NO_RESIDENT;
+
+	if(GetExport("SceSyscon", 0x60A35F64, 0xD2F456DC, &sceSysconGetErnieDLVersion) < 0)
+		return SCE_KERNEL_START_NO_RESIDENT;
+
+	if(GetExport("SceSyscon", 0x60A35F64, 0x68E0031E, &sceSysconGetBatteryVersion) < 0)
 		return SCE_KERNEL_START_NO_RESIDENT;
 
 	return SCE_KERNEL_START_SUCCESS;
