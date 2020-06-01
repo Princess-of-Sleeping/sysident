@@ -21,12 +21,7 @@ add_executable(SysidentKernel
 )
 
 target_link_libraries(SysidentKernel
-  SceDebugForDriver_stub
-  SceIofilemgrForDriver_stub
-  SceSblSsMgrForDriver_stub
-  SceSysclibForDriver_stub
   SceSysmemForDriver_stub
-  SceThreadmgrForDriver_stub
   taihenForKernel_stub
   taihenModuleUtils_stub
 )
