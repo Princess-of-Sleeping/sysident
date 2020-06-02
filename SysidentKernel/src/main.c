@@ -43,6 +43,7 @@ SceBootArgs *(* sceKernelSysrootGetKblParam)(void);
 
 int (* scePervasiveGetSoCRevision)(void);
 
+int  (* sceSysconGetBaryonVersion)(void);
 void (* sceSysconGetErnieDLVersion)(int *result);
 int  (* sceSysconGetBatteryVersion)(int *HWinfo, int *FWinfo, int *DFinfo);
 
@@ -81,6 +82,19 @@ int sysidentGetSoCRevision(int *pRev){
 	return res;
 }
 
+int sysidentGetBaryonVersion(void){
+
+	int state, res;
+
+	ENTER_SYSCALL(state);
+
+	res = sceSysconGetBaryonVersion();
+
+	EXIT_SYSCALL(state);
+
+	return res;
+}
+
 int sysidentGetErnieDLVersion(int *pVersion){
 
 	int state, res;
@@ -101,9 +115,7 @@ int sysidentGetErnieDLVersion(int *pVersion){
 
 int sysidentGetBatteryVersion(int *pHWinfo, int *pFWinfo, int *pDFinfo){
 
-	int state, res;
-
-	int HWinfo, FWinfo, DFinfo;
+	int state, res, HWinfo, FWinfo, DFinfo;
 
 	ENTER_SYSCALL(state);
 
@@ -130,6 +142,9 @@ int module_start(SceSize argc, const void *args){
 		return SCE_KERNEL_START_NO_RESIDENT;
 
 	if(GetExport("SceLowio", 0xE692C727, 0x714EEFB7, &scePervasiveGetSoCRevision) < 0)
+		return SCE_KERNEL_START_NO_RESIDENT;
+
+	if(GetExport("SceSyscon", 0x60A35F64, 0xFF86F4C5, &sceSysconGetBaryonVersion) < 0)
 		return SCE_KERNEL_START_NO_RESIDENT;
 
 	if(GetExport("SceSyscon", 0x60A35F64, 0xD2F456DC, &sceSysconGetErnieDLVersion) < 0)
