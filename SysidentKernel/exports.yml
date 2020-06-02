@@ -12,5 +12,6 @@ SysidentKernel:
       functions:
         - sysidentGetBootloaderRevision
         - sysidentGetSoCRevision
+        - sysidentGetBaryonVersion
         - sysidentGetErnieDLVersion
         - sysidentGetBatteryVersion
