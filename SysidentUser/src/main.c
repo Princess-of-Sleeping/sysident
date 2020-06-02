@@ -554,6 +554,17 @@ int addBatteryVersion(void){
 	return 0;
 }
 
+int addBaryonVersion(void){
+
+	char text[0x80];
+
+	sceClibSnprintf(text, sizeof(text) - 1, "0x%08X", sysidentGetBaryonVersion());
+
+	add_entry("info_baryon_version", "Baryon Version", text);
+
+	return 0;
+}
+
 int addSysident(SceSize args, void *argp){
 
 	char cid[0x20];
@@ -605,6 +616,7 @@ int addSysident(SceSize args, void *argp){
 		addHardwareInfo();
 		addBootloaderRevision();
 		addSoCRevision();
+		addBaryonVersion();
 		addErnieDLVersion();
 		addBatteryVersion();
 	}
