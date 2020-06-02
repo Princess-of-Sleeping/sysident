@@ -22,6 +22,7 @@ int sysidentGetBootloaderRevision(int *rev);
 
 int sysidentGetSoCRevision(int *pRev);
 
+int sysidentGetBaryonVersion(void);
 int sysidentGetErnieDLVersion(int *pVersion);
 int sysidentGetBatteryVersion(int *pHWinfo, int *pFWinfo, int *pDFinfo);
 
