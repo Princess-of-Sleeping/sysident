@@ -253,7 +253,7 @@ int addDeviceType(char *cid){
 			sceClibSnprintf(text, sizeof(text) - 1, "%s(%s)", "Retail", "J1/Japan");
 			break;
 		case 0x04:
-			sceClibSnprintf(text, sizeof(text) - 1, "%s(%s)", "Retail", "UC2/united ctates");
+			sceClibSnprintf(text, sizeof(text) - 1, "%s(%s)", "Retail", "UC2/United States");
 			break;
 		case 0x05:
 			sceClibSnprintf(text, sizeof(text) - 1, "%s(%s)", "Retail", "CEL");
@@ -274,7 +274,7 @@ int addDeviceType(char *cid){
 			sceClibSnprintf(text, sizeof(text) - 1, "%s(%s)", "Retail", "E12");
 			break;
 		case 0x0B:
-			sceClibSnprintf(text, sizeof(text) - 1, "%s(%s)", "Retail", "TW1/taiwan");
+			sceClibSnprintf(text, sizeof(text) - 1, "%s(%s)", "Retail", "TW1/Taiwan");
 			break;
 		case 0x0C:
 			sceClibSnprintf(text, sizeof(text) - 1, "%s(%s)", "Retail", "RU3");
