@@ -1,6 +1,6 @@
 
-#ifndef _PSP2_KERNEL_SYSROOT_H_
-#define _PSP2_KERNEL_SYSROOT_H_
+#ifndef _PSP2_KERNEL_SYSROOT_SYSIDENT_H_
+#define _PSP2_KERNEL_SYSROOT_SYSIDENT_H_
 
 #include <psp2kern/types.h>
 
@@ -58,4 +58,4 @@ typedef struct SceBootArgs {
 	uint8_t unused[0xE0];
 } __attribute__((packed)) SceBootArgs;
 
-#endif // _PSP2_KERNEL_SYSROOT_H_
+#endif // _PSP2_KERNEL_SYSROOT_SYSIDENT_H_
