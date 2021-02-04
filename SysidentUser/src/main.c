@@ -238,7 +238,9 @@ int addDeviceType(char *cid){
 
 	sceClibSnprintf(text, sizeof(text) - 1, "Unknown");
 
-	if(cid[5] < 0xF){
+	if(*(uint16_t*)(&cid[4]) == 0x301 && *(uint16_t*)(&cid[6]) == 0x1000 && cid[8] == 0x90){
+		sceClibSnprintf(text, sizeof(text) - 1, "Diagnostics");
+	}else if(cid[5] < 0xF){
 		switch(cid[5]){
 		case 0x00:
 			sceClibStrncpy(text, "Internal Test Unit", sizeof(text) - 1);
@@ -302,7 +304,7 @@ int addDeviceType(char *cid){
 	return 0;
 }
 
-int addSystemType(void){
+int addSystemType(char *cid){
 
 	char text[0x80];
 
@@ -316,6 +318,8 @@ int addSystemType(void){
 		sceClibSnprintf(text, sizeof(text) - 1, "Development kit");
 	}else if(vshSblAimgrIsTest() != 0){
 		sceClibSnprintf(text, sizeof(text) - 1, "Internal Test Unit");
+	}else if(*(uint16_t*)(&cid[4]) == 0x301 && *(uint16_t*)(&cid[6]) == 0x1000 && cid[8] == 0x90){
+		sceClibSnprintf(text, sizeof(text) - 1, "Diagnostics");
 	}
 
 	add_entry("info_vita_sys_type", "System Type", text);
@@ -583,7 +587,7 @@ int addSysident(SceSize args, void *argp){
 	addOpenPSID();
 	addDeviceModel(cid);
 	addDeviceType(cid);
-	addSystemType();
+	addSystemType(cid);
 
 	add_category("sysident_system_mode", "System Mode");
 
