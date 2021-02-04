@@ -516,7 +516,7 @@ int addSoCRevision(void){
 
 	sysidentGetSoCRevision(&rev);
 
-	sceClibSnprintf(text, sizeof(text) - 1, "%d", rev & 0xFFFF);
+	sceClibSnprintf(text, sizeof(text) - 1, "%d", rev & 0xFF);
 
 	add_entry("info_soc_rev", "SoC Revision", text);
 
