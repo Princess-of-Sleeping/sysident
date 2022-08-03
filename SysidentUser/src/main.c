@@ -26,8 +26,6 @@
 #include "taihen_min.h"
 #include "../../SysidentKernel/src/sysident_helper.h"
 
-SceUID _vshKernelSearchModuleByName(const char *module_name, void *vsh_buf);
-int _vshSblAimgrGetSMI(int *result);
 int _vshSysconGetHardwareInfo(unsigned char *info);
 int sceSblPmMgrGetCurrentMode(int *result);
 int _sceKernelGetOpenPsId(char *pOpenPsid);
@@ -160,7 +158,7 @@ int addCurrentFw(void){
 int addFactoryFw(void){
 
 	char text[0x80];
-	int version = 0;
+	unsigned int version = 0;
 
 	_vshSblAimgrGetSMI(&version);
 
