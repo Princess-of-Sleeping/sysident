@@ -209,20 +209,25 @@ int addOpenPSID(void){
 int addDeviceModel(char *cid){
 
 	char text[0x80];
+	SceUInt32 product_sub_code;
+
+	product_sub_code = (cid[6] << 8) | cid[7];
 
 	sceClibSnprintf(text, sizeof(text) - 1, "Unknown");
 
-	if(vshSblAimgrIsGenuineDolce() != 0){
+	if(product_sub_code < 0x10){
+			sceClibSnprintf(text, sizeof(text) - 1, "PlayStation Vita (Prototype)");
+	}else if(vshSblAimgrIsGenuineDolce() != 0){
 		sceClibSnprintf(text, sizeof(text) - 1, "PlayStation TV");
 
-	}else if(vshSblAimgrIsGenuineVITA() != 0){
-		if(cid[7] == 0x14 || cid[7] == 0x18){
-			sceClibSnprintf(text, sizeof(text) - 1, "PlayStation Vita Slim");
-		}else if(cid[7] == 0x10){
+	}else if(vshSblAimgrIsGenuineVITA() != 0 && product_sub_code < 0x20 && ((1 << product_sub_code) & 0x1170000) != 0){
+		if(((1 << product_sub_code) & 0x70000) != 0){
 			sceClibSnprintf(text, sizeof(text) - 1, "PlayStation Vita Fat%s", (vshSysconHasWWAN() == 0) ? "" : "(3G)");
 		}else{
-			sceClibSnprintf(text, sizeof(text) - 1, "PlayStation Vita Unknown");
+			sceClibSnprintf(text, sizeof(text) - 1, "PlayStation Vita Slim");
 		}
+	}else{
+		sceClibSnprintf(text, sizeof(text) - 1, "PlayStation Vita Unknown (0x%X)", product_sub_code);
 	}
 
 	add_entry("info_vita_model", "Device Model", text);
